@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080914">
+<title>ECHO Genesis</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080914;color:#f4f4ff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.app{max-width:520px;margin:auto;padding:25px 19px 45px}
+header{display:flex;align-items:center;gap:12px;margin:12px 0 30px}
+.logo{width:53px;height:53px;border:1px solid #8271ff;border-radius:16px;display:grid;place-items:center;color:#a99aff;font-size:30px;text-shadow:0 0 15px #8c67ff;box-shadow:0 0 22px #754cff35}
+.brand{font-size:21px;font-weight:800;letter-spacing:3px}
+.sub{font-size:10px;color:#9287d8;letter-spacing:4px;margin-top:4px}
+.status{margin-left:auto;color:#8ce5ff;font-size:11px}
+.hero{border:1px solid #5145a0;border-radius:23px;padding:27px 20px;background:radial-gradient(ellipse at 50% 0%,#393078 0%,#17152f 42%,#10111e 100%);text-align:center;box-shadow:0 0 35px #6149aa22}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#b9adff}
+.hero h1{font-size:37px;letter-spacing:5px;margin:13px 0 5px;text-shadow:0 0 22px #9175ff}
+.hero p{font-size:13px;color:#c1c0dd;line-height:1.6}
+.orb{font-size:68px;margin:12px 0;color:#a9caff;text-shadow:0 0 30px #806aff}
+.section{margin-top:27px}
+.heading{font-size:17px;font-weight:700;margin-bottom:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat,.panel{border:1px solid #292b46;background:#111321;border-radius:16px;padding:17px}
+.stat small{color:#999ab7;font-size:11px}
+.stat strong{display:block;font-size:24px;margin-top:8px;color:#b9adff}
+.panel{line-height:1.6;color:#c6c6df;font-size:13px}
+button{border:0;border-radius:13px;padding:15px 17px;background:linear-gradient(100deg,#7354e8,#368cce);color:white;font-size:14px;font-weight:700;width:100%;margin-top:13px}
+button.secondary{background:#20223a;border:1px solid #46466c}
+input,textarea{width:100%;padding:14px;margin-top:10px;background:#0b0d19;border:1px solid #41415e;border-radius:11px;color:white;font:inherit}
+textarea{min-height:75px;resize:vertical}
+.artifact{border:1px solid #39365e;border-radius:15px;padding:15px;margin-top:12px;background:#141528}
+.artifact .symbol{font-size:30px}
+.artifact strong{display:block;margin:7px 0}
+.muted{color:#9695b6;font-size:12px}
+nav{display:flex;gap:8px;margin-top:25px}
+nav button{margin:0;padding:12px 5px;background:#191a2d;border:1px solid #353550;font-size:12px}
+nav button.active{background:#4b3b91;border-color:#9381ff}
+footer{text-align:center;color:#686987;font-size:10px;margin-top:35px;letter-spacing:2px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div class="logo">E</div>
+<div>
+<div class="brand">ECHO</div>
+<div class="sub">GENESIS</div>
+</div>
+<div class="status">● GENESIS 001</div>
+</header>
+
+<section class="hero">
+<div class="eyebrow">WELCOME TO A NEW CIVILIZATION</div>
+<div class="orb">✧</div>
+<h1>ECHO GENESIS</h1>
+<p>Создавай. Исследуй. Оставляй свой след.<br>Твоя история начинается здесь.</p>
+</section>
+
+<section class="section">
+<div class="heading">Твой профиль</div>
+<div class="stats">
+<div class="stat"><small>ИГРОВЫЕ БАЛЛЫ</small><strong id="points">100</strong></div>
+<div class="stat"><small>АРТЕФАКТЫ</small><strong id="count">0</strong></div>
+</div>
+</section>
+
+<nav>
+<button class="active" id="homeTab" onclick="showTab('home')">Обзор</button>
+<button id="collectionTab" onclick="showTab('collection')">Коллекция</button>
+<button id="createTab" onclick="showTab('create')">Создать</button>
+</nav>
+
+<section id="home" class="section">
+<div class="heading">Первый шаг в ECHO</div>
+<div class="panel">
+Каждый артефакт хранит историю своего создателя. Начни свою коллекцию и исследуй цифровую вселенную.
+</div>
+<button onclick="showTab('create')">Создать первый артефакт</button>
+</section>
+
+<section id="collection" class="section hidden">
+<div class="heading">Моя коллекция</div>
+<div id="items"></div>
+</section>
+
+<section id="create" class="section hidden">
+<div class="heading">Создание артефакта</div>
+<div class="panel">Придумай название и историю своего первого цифрового объекта.</div>
+<input id="artifactName" maxlength="35" placeholder="Название артефакта">
+<textarea id="artifactDesc" maxlength="180" placeholder="Его история и значение..."></textarea>
+<button onclick="createArtifact()">Создать артефакт</button>
+<p class="muted">В этой демонстрационной версии создание бесплатно. Предмет пока существует только в твоём браузере.</p>
+</section>
+
+<footer>ECHO GENESIS • CREATE • COLLECT • EVOLVE</footer>
+</div>
+
+<script>
+let artifacts=JSON.parse(localStorage.getItem('echoArtifacts')||'[]');
+function update(){
+document.getElementById('count').textContent=artifacts.length;
+document.getElementById('items').innerHTML=artifacts.length?artifacts.map(a=>`
+<div class="artifact">
+<div class="symbol">✧</div>
+<strong>${escapeHTML(a.name)}</strong>
+<div class="muted">${escapeHTML(a.desc||'История ещё не рассказана')}</div>
+<div class="muted">GENESIS • Локальный артефакт</div>
+</div>`).join(''):'<div class="panel">Коллекция пока пуста. Создай свой первый артефакт.</div>';
+}
+function escapeHTML(s){
+return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showTab(tab){
+['home','collection','create'].forEach(id=>{
+document.getElementById(id).classList.toggle('hidden',id!==tab);
+document.getElementById(id+'Tab').classList.toggle('active',id===tab);
+});
+if(tab==='collection')update();
+}
+function createArtifact(){
+let name=document.getElementById('artifactName').value.trim();
+let desc=document.getElementById('artifactDesc').value.trim();
+if(!name){alert('Сначала придумай название артефакта');return;}
+artifacts.push({name,desc});
+localStorage.setItem('echoArtifacts',JSON.stringify(artifacts));
+document.getElementById('artifactName').value='';
+document.getElementById('artifactDesc').value='';
+update();
+showTab('collection');
+}
+update();
+</script>
+</body>
+</html>
